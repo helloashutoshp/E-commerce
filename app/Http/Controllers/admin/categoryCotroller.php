@@ -45,8 +45,8 @@ class categoryCotroller extends Controller
                 $ext = last($extArray);
                 $newimgname = $category->id . '.' . $ext;
                 $spath = public_path() . '/temp/' . $tempimage->name;
-                $dpath = public_path() . '/uploads/category_img/'. $newimgname;
-                $thumb_img = public_path() . '/uploads/category_img/thumb/'. $newimgname;
+                $dpath = public_path() . '/uploads/category_img/' . $newimgname;
+                $thumb_img = public_path() . '/uploads/category_img/thumb/' . $newimgname;
                 File::copy($spath, $dpath);
                 File::copy($spath, $thumb_img);
                 $category->image = $newimgname;
@@ -141,7 +141,6 @@ class categoryCotroller extends Controller
     public function slug(Request $req)
     {
         $title = $req->title;
-        // dd($title);
         $slug = Str::slug($title);
         return response()->json([
             'status' => true,

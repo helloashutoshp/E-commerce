@@ -60,6 +60,9 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row image-gallery">
+
+                        </div>
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h2 class="h4 mb-3">Pricing</h2>
@@ -192,7 +195,7 @@
 
                 <div class="pb-5 pt-3">
                     <button class="btn btn-primary">Create</button>
-                    <a href="{{route('admin-product-list')}}" class="btn btn-outline-dark ml-3">Cancel</a>
+                    <a href="{{ route('admin-product-list') }}" class="btn btn-outline-dark ml-3">Cancel</a>
                 </div>
             </div>
         </form>
@@ -269,26 +272,37 @@
                 }
             });
         });
-        // Dropzone.autoDiscover = false;
-        // const dropzone = $('#image').dropzone({
-        //     init: function() {
-        //         this.on('addedfile', function(file) {
-        //             if (this.files.length > 1) {
-        //                 this.removeFile(this.files[0]);
-        //             }
-        //         });
-        //     },
-        //     url: "{{ route('temp-image-create') }}",
-        //     maxFiles: 1,
-        //     paramName: 'image',
-        //     addRemoveLinks: true,
-        //     acceptedFiles: "image/jpeg,image/png,image/jpg,image/gif",
-        //     headers: {
-        //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //     },
-        //     success: function(file,res) {
-        //         $('#image_id').val(res.imageId);
-        //     }
-        // })
+        Dropzone.autoDiscover = false;
+        const dropzone = $('#image').dropzone({
+            url: "{{ route('temp-image-create') }}",
+            maxFiles: 10,
+            paramName: 'image',
+            addRemoveLinks: true,
+            acceptedFiles: "image/jpeg,image/png,image/jpg,image/gif",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(file, res) {
+                console.log(res.imagePath);
+                var gallery = `
+                <div class="col-md-3" id="single-image${res.imageId}">
+                 <div class="card" >
+                    <input type="hidden" value="${res.imageId}" name="productImg[]" />
+                    <img class="card-img-top" src="${res.imagePath}" alt="Card image cap">  
+                    <div class="card-body">
+                        <a href="javascript:void(0)" onclick="deleteImage(${res.imageId})" class="btn btn-danger">Delete<a/>    
+                    </div>
+                  </div>
+                </div>`
+                $('.image-gallery').append(gallery);
+               
+            },
+            complete:function(file){
+                    this.removeFile(file);
+                }
+        });
+        function deleteImage(id){
+            $('#single-image'+id).remove();
+        }
     </script>
 @endsection

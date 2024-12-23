@@ -22,17 +22,23 @@
             <div class="card">
                 <div class="card-header">
                     @include('admin.message')
-                    <div class="card-tools">
-                        <div class="input-group input-group" style="width: 250px;">
-                            <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default">
-                                    <i class="fas fa-search"></i>
-                                </button>
+                    <form action="" method="GET">
+                        <div class="card-header">
+                            <button type="button" onclick="window.location.href ='{{ route('admin-product-list') }}'"
+                                class="btn btn-default">Reset</button>
+                            <div class="card-tools">
+                                <div class="input-group input-group" style="width: 250px;">
+                                    <input value="{{ Request::get('keyword') }}" type="text" name="keyword"
+                                        class="form-control float-right" placeholder="Search">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-default">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
                 <div class="card-body table-responsive p-0">
                     <table class="table table-hover text-nowrap">
@@ -40,10 +46,10 @@
                             <tr>
                                 <th width="60">ID</th>
                                 <th width="80">Image</th>
+                                <th>Product</th>
                                 <th>Category</th>
                                 <th>Sub Category</th>
                                 <th>Brand</th>
-                                <th>Product</th>
                                 <th>Price</th>
                                 <th>Qty</th>
                                 <th>SKU</th>
@@ -56,13 +62,20 @@
                                 <?php $i = 1; ?>
 
                                 @foreach ($product as $prod)
+                                    @php
+                                        $proImg = $prod->product_img->first();
+                                    @endphp
                                     <tr>
                                         <td>{{ $i }}</td>
-                                        <td><img src="img/product-1.jpg" class="img-thumbnail" width="50"></td>
+                                        @if (!empty($proImg->image))
+                                            <td><img src={{ asset('uploads/product/large/' . $proImg->image) }}
+                                                    class="img-thumbnail" width="50"></td>
+                                        @else<td><img src="" class="img-thumbnail" width="50"></td>
+                                        @endif
+                                        <td>{{ $prod->title }}</td>
                                         <td>{{ $prod->categoryName }}</td>
                                         <td>{{ $prod->subCategoryName }}</td>
                                         <td>{{ $prod->brandName }}</td>
-                                        <td><a href="#">{{ $prod->title }}</a></td>
                                         <td>${{ $prod->price }}</td>
                                         <td>{{ $prod->sku }} left in Stock</td>
                                         <td>{{ $prod->barcode }}</td>
@@ -96,7 +109,7 @@
                                                     </path>
                                                 </svg>
                                             </a>
-                                            <a href="#" class="text-danger w-4 h-4 mr-1">
+                                            <a href="#" onclick=deleteCategory({{$prod->id}}) class="text-danger w-4 h-4 mr-1">
                                                 <svg wire:loading.remove.delay="" wire:target=""
                                                     class="filament-link-icon w-4 h-4 mr-1"
                                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
@@ -128,12 +141,12 @@
         function deleteCategory(id) {
             if (confirm('Do you really want to delete this ?')) {
                 $.ajax({
-                    url: `{{ url('/admin/category/delete') }}/${id}`,
+                    url: `{{ url('/admin/product/delete') }}/${id}`,
                     type: 'get',
                     dataType: 'json',
                     success: function(response) {
                         if (response.status == true) {
-                            window.location.href = "{{ route('category-list') }}"
+                            window.location.href = "{{ route('admin-product-list') }}"
                         }
                     }
                 });

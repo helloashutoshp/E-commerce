@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Cate;
 use App\Models\Product;
+use App\Models\ProductImg;
 use App\Models\Subcategory;
+use App\Models\Tempimage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Can;
+use Illuminate\Support\Facades\File;
 
 class productController extends Controller
 {
@@ -52,6 +55,24 @@ class productController extends Controller
             $product->trackqty = $req->track_qty;
             $product->qty = $req->qty;
             $product->save();
+
+            if (!empty($req->productImg)) {
+                foreach ($req->productImg as $imageId) {
+                    $tempImg = Tempimage::find($imageId);
+                    $imageName = explode('.', $tempImg->name);
+                    $ext = last($imageName);
+                    $productImage = new ProductImg();
+                    $productImage->product_id = $product->id;
+                    $productImage->save();
+                    $newImagename = $product->id . '-' . $productImage->id . '-' . time() . '.' . $ext;
+                    $productImage->image =  $newImagename;
+                    $productImage->save();
+                    $spath = public_path() . '/temp/' . $tempImg->name;
+                    $dpath = public_path() . '/uploads/product/large/' . $newImagename;
+                    File::copy($spath, $dpath);
+                }
+            }
+
             session()->flash('success', 'Successfully product created');
             return response()->json([
                 'status' => true,
@@ -65,19 +86,41 @@ class productController extends Controller
         }
     }
 
-    public function index(){
-        $product = Product::select(
-            'product.*',
-            'cat.name as categoryName',
-            'sub_cate.name as subCategoryName',
-            'brand.name as brandName'
-        )
-        ->leftJoin('cat', 'cat.id', '=', 'product.category_id') // Join with categories
-        ->leftJoin('sub_cate', 'sub_cate.id', '=', 'product.sub_cate_id') // Join with sub_categories
-        ->leftJoin('brand', 'brand.id', '=', 'product.brand_id') // Join with brands
-        ->latest('product.id') // Order by products.id in descending order
-        ->paginate(10);
-        return view('admin.product.list',['product'=>$product]);
+    public function index(Request $req)
+    {
+
+        $search = $req['keyword'];
+        if ($search) {
+            $product = Product::with('product_img')
+                ->select(
+                    'product.*',
+                    'cat.name as categoryName',
+                    'sub_cate.name as subCategoryName',
+                    'brand.name as brandName'
+                )
+                ->leftJoin('cat', 'cat.id', '=', 'product.category_id')
+                ->leftJoin('sub_cate', 'sub_cate.id', '=', 'product.sub_cate_id')
+                ->leftJoin('brand', 'brand.id', '=', 'product.brand_id')
+                ->when($search, function ($query, $search) {
+                    $query->where('product.title', 'LIKE', "%{$search}%");
+                })
+                ->latest('product.id')
+                ->paginate(10);
+        } else {
+            $product = Product::with('product_img')
+                ->select(
+                    'product.*',
+                    'cat.name as categoryName',
+                    'sub_cate.name as subCategoryName',
+                    'brand.name as brandName'
+                )
+                ->leftJoin('cat', 'cat.id', '=', 'product.category_id')
+                ->leftJoin('sub_cate', 'sub_cate.id', '=', 'product.sub_cate_id')
+                ->leftJoin('brand', 'brand.id', '=', 'product.brand_id')
+                ->latest('product.id')
+                ->paginate(10);
+        }
+        return view('admin.product.list', ['product' => $product]);
     }
 
     public function subCategory(Request $req)
@@ -94,5 +137,27 @@ class productController extends Controller
                 'subcategory' => ''
             ]);
         }
+    }
+
+    public function destroy($id) {
+        $product = Product::find($id);
+        $productImages = ProductImg::where('product_id', $id)->get();   
+        if (!$product) {
+            session()->flash('error', 'product not found');
+            return response()->json([
+                'status' => false,
+                'message' => 'no product found'
+            ]);
+        }
+        $product->delete();
+        foreach ($productImages as $productImage) {
+            File::delete(public_path('uploads/product/large/' . $productImage->image));
+            $productImage->delete(); // Delete the image record from the database
+        }
+        session()->flash('success', 'Product deleted');
+        return response()->json([
+            'status' => true,
+            'message' => 'deleted'
+        ]);
     }
 }

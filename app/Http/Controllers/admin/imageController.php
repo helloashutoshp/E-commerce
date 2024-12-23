@@ -16,9 +16,11 @@ class imageController extends Controller
         $imgTable->name = $newname;
         $imgTable->save();
         $image->move(public_path().'/temp',$newname);
+        $img_path = asset('temp/'.$newname);
         return response()->json([
             'status'=>true,
             'imageId'=>$imgTable->id,
+            'imagePath'=>$img_path,
             'message'=>'Image uploaded successfully'
         ]);
     }
