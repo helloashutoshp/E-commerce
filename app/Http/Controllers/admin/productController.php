@@ -139,9 +139,33 @@ class productController extends Controller
         }
     }
 
-    public function destroy($id) {
+    public function edit($id)
+    {
+        $category = Cate::orderby('name', 'ASC')->get();
+        $brand = Brand::orderby('name', 'ASC')->get();
+        $subcategory = Subcategory::orderby('name', 'ASC')->get();
+        $product = Product::select(
+            'product.*',
+            'cat.name as categoryName',
+            'sub_cate.name as subCategoryName',
+            'brand.name as brandName',
+        )
+            ->leftJoin('cat', 'cat.id', '=', 'product.category_id')
+            ->leftJoin('sub_cate', 'sub_cate.id', '=', 'product.sub_cate_id')
+            ->leftJoin('brand', 'brand.id', '=', 'product.brand_id')
+            ->where('product.id', $id)
+            ->first();
+        if (empty($product)) {
+            session()->flash('error', ' product not found');
+            return redirect()->route('admin-product-list');
+        }
+        return view('admin.product.edit', ['product' => $product, 'brands' => $brand, 'category' => $category, 'subcategory' => $subcategory]);
+    }
+
+    public function destroy($id)
+    {
         $product = Product::find($id);
-        $productImages = ProductImg::where('product_id', $id)->get();   
+        $productImages = ProductImg::where('product_id', $id)->get();
         if (!$product) {
             session()->flash('error', 'product not found');
             return response()->json([
@@ -159,5 +183,67 @@ class productController extends Controller
             'status' => true,
             'message' => 'deleted'
         ]);
+    }
+
+    public function update(Request $req){
+        $product = Product::find($req->product_id);
+        $rules = [
+            'title' => 'required',
+            'slug' => 'required|unique:product,slug,' . $product->id . 'id',
+            'price' => 'required|numeric',
+            'sku' => 'required',
+            'track_qty' => 'required',
+            'category' => 'required|numeric',
+            'is_featured' => 'required|in:Yes,No',
+        ];
+        if (!empty($req['track_qty']) && $req['track_qty'] == 'Yes') {
+            $rules['qty'] = 'required|numeric';
+        }
+
+        $validator = Validator::make($req->all(), $rules);
+        if ($validator->passes()) {
+            $product->title = $req->title;
+            $product->slug = $req->slug;
+            $product->description = $req->description;
+            $product->price = $req->price;
+            $product->compare_price = $req->compare_price;
+            $product->category_id = $req->category;
+            $product->sub_cate_id = $req->sub_category;
+            $product->brand_id = $req->brand;
+            $product->isfeature = $req->is_featured;
+            $product->sku = $req->sku;
+            $product->barcode = $req->barcode;
+            $product->trackqty = $req->track_qty;
+            $product->qty = $req->qty;
+            $product->update();
+
+            // if (!empty($req->productImg)) {
+            //     foreach ($req->productImg as $imageId) {
+            //         $tempImg = Tempimage::find($imageId);
+            //         $imageName = explode('.', $tempImg->name);
+            //         $ext = last($imageName);
+            //         $productImage = new ProductImg();
+            //         $productImage->product_id = $product->id;
+            //         $productImage->save();
+            //         $newImagename = $product->id . '-' . $productImage->id . '-' . time() . '.' . $ext;
+            //         $productImage->image =  $newImagename;
+            //         $productImage->save();
+            //         $spath = public_path() . '/temp/' . $tempImg->name;
+            //         $dpath = public_path() . '/uploads/product/large/' . $newImagename;
+            //         File::copy($spath, $dpath);
+            //     }
+            // }
+
+            session()->flash('success', 'Successfully product updated');
+            return response()->json([
+                'status' => true,
+                'message' => 'validation done'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
     }
 }

@@ -86,7 +86,7 @@ class subCategoryController extends Controller
     public function edit($id)
     {
         $maincategory = Cate::orderby('name', 'ASC')->get();
-        $category = Subcategory::select('sub_cate.*', 'cat.name as categoryName' . 'cat.id as categoryId')
+        $category = Subcategory::select('sub_cate.*', 'cat.name as categoryName' ,'cat.id as categoryId')
             ->latest('sub_cate.id')
             ->leftJoin('cat', 'cat.id', '=', 'sub_cate.category_id')
             ->where('sub_cate.id', $id) // Replace $id with the specific ID you want to fetch
