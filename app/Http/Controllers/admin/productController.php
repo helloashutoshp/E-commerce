@@ -141,9 +141,14 @@ class productController extends Controller
 
     public function edit($id)
     {
+        $prod = Product::find($id);
+        // dd($prod);
         $category = Cate::orderby('name', 'ASC')->get();
         $brand = Brand::orderby('name', 'ASC')->get();
-        $subcategory = Subcategory::orderby('name', 'ASC')->get();
+        $subcategory = Subcategory::where('id', $prod ->sub_cate_id)
+            ->orderBy('name', 'ASC')
+            ->get();
+            // dd($subcategory);
         $product = Product::select(
             'product.*',
             'cat.name as categoryName',
@@ -185,7 +190,8 @@ class productController extends Controller
         ]);
     }
 
-    public function update(Request $req){
+    public function update(Request $req)
+    {
         $product = Product::find($req->product_id);
         $rules = [
             'title' => 'required',

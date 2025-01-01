@@ -123,7 +123,8 @@
                                         </div>
                                         <div class="mb-3">
                                             <input type="number" min="0" name="qty" id="qty"
-                                                class="form-control" placeholder="Qty" value="{{$product->qty}}" disabled>
+                                                class="form-control" placeholder="Qty" value="{{ $product->qty }}"
+                                                disabled>
                                             <p class="error"></p>
                                         </div>
                                     </div>
@@ -165,7 +166,13 @@
                                 <div class="mb-3">
                                     <label for="category">Sub category</label>
                                     <select name="sub_category" id="sub_category" class="form-control">
-                                        <option value="">{{ $product->subCategoryName }}</option>
+                                        @if ($subcategory->isNotEmpty())
+                                            @foreach ($subcategory as $subcat)
+                                                <option value="{{ $subcat->id}}"
+                                                    {{ $product->sub_cate_id == $subcat->id ? 'selected' : '' }}>
+                                                    {{ $product->subCategoryName }}</option>
+                                            @endforeach
+                                        @endif
                                     </select>
                                 </div>
                             </div>
@@ -220,8 +227,9 @@
         $('#track_qty').change(function() {
             qtyChecked();
         });
+
         function qtyChecked() {
-            var tQty = $('#track_qty'); 
+            var tQty = $('#track_qty');
             $('#qty').prop('disabled', !tQty.prop('checked'));
         }
         $('#editproductForm').submit(function(e) {
@@ -288,10 +296,29 @@
             });
         }
 
+        function categoryOldAssign() {
+            var category = $('#category').val();
+            $.ajax({
+                url: "{{ route('product-subCategory') }}",
+                type: 'get',
+                data: {
+                    category: category
+                },
+                dataType: 'json',
+                success: function(response) {
+                    $('#sub_category').find('option').not(':first').remove();
+                    $.each(response['subcategory'], function(key, item) {
+                        $('#sub_category').append(
+                            `<option value='${item.id}'>${item.name}</option>`)
+                    })
+                }
+            });
+        }
+
         $('#category').on('change', function() {
             categoryAssign();
         });
-        categoryAssign();
+        categoryOldAssign();
         Dropzone.autoDiscover = false;
         const dropzone = $('#image').dropzone({
             url: "{{ route('temp-image-create') }}",
