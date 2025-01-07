@@ -59,7 +59,9 @@
                         </thead>
                         <tbody>
                             @if ($product->isNotEmpty())
-                                <?php $i = 1; ?>
+                                <?php $i = ($product->currentPage() - 1) * $product->perPage();
+                                $i = $i + 1;
+                                ?>
 
                                 @foreach ($product as $prod)
                                     @php
@@ -109,7 +111,8 @@
                                                     </path>
                                                 </svg>
                                             </a>
-                                            <a href="#" onclick=deleteCategory({{$prod->id}}) class="text-danger w-4 h-4 mr-1">
+                                            <a href="#" onclick=deleteCategory({{ $prod->id }})
+                                                class="text-danger w-4 h-4 mr-1">
                                                 <svg wire:loading.remove.delay="" wire:target=""
                                                     class="filament-link-icon w-4 h-4 mr-1"
                                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
@@ -146,6 +149,9 @@
                     dataType: 'json',
                     success: function(response) {
                         if (response.status == true) {
+                            window.location.href = "{{ route('admin-product-list') }}"
+                        } else {
+                            console.log("delete");
                             window.location.href = "{{ route('admin-product-list') }}"
                         }
                     }

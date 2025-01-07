@@ -54,6 +54,7 @@ class productController extends Controller
             $product->barcode = $req->barcode;
             $product->trackqty = $req->track_qty;
             $product->qty = $req->qty;
+            $product->status = $req->status;
             $product->save();
 
             if (!empty($req->productImg)) {
@@ -142,13 +143,16 @@ class productController extends Controller
     public function edit($id)
     {
         $prod = Product::find($id);
-        // dd($prod);
+        $productImage = ProductImg::where('product_id', $id)->get();
+        if (empty($prod)) {
+            session()->flash('error', ' product not found');
+            return redirect()->route('admin-product-list');
+        }
         $category = Cate::orderby('name', 'ASC')->get();
         $brand = Brand::orderby('name', 'ASC')->get();
-        $subcategory = Subcategory::where('id', $prod ->sub_cate_id)
+        $subcategory = Subcategory::where('id', $prod->sub_cate_id)
             ->orderBy('name', 'ASC')
             ->get();
-            // dd($subcategory);
         $product = Product::select(
             'product.*',
             'cat.name as categoryName',
@@ -164,7 +168,7 @@ class productController extends Controller
             session()->flash('error', ' product not found');
             return redirect()->route('admin-product-list');
         }
-        return view('admin.product.edit', ['product' => $product, 'brands' => $brand, 'category' => $category, 'subcategory' => $subcategory]);
+        return view('admin.product.edit', ['product' => $product, 'brands' => $brand, 'category' => $category, 'subcategory' => $subcategory, 'productImage' => $productImage]);
     }
 
     public function destroy($id)
@@ -221,24 +225,8 @@ class productController extends Controller
             $product->barcode = $req->barcode;
             $product->trackqty = $req->track_qty;
             $product->qty = $req->qty;
+            $product->status = $req->status;
             $product->update();
-
-            // if (!empty($req->productImg)) {
-            //     foreach ($req->productImg as $imageId) {
-            //         $tempImg = Tempimage::find($imageId);
-            //         $imageName = explode('.', $tempImg->name);
-            //         $ext = last($imageName);
-            //         $productImage = new ProductImg();
-            //         $productImage->product_id = $product->id;
-            //         $productImage->save();
-            //         $newImagename = $product->id . '-' . $productImage->id . '-' . time() . '.' . $ext;
-            //         $productImage->image =  $newImagename;
-            //         $productImage->save();
-            //         $spath = public_path() . '/temp/' . $tempImg->name;
-            //         $dpath = public_path() . '/uploads/product/large/' . $newImagename;
-            //         File::copy($spath, $dpath);
-            //     }
-            // }
 
             session()->flash('success', 'Successfully product updated');
             return response()->json([
@@ -249,6 +237,48 @@ class productController extends Controller
             return response()->json([
                 'status' => false,
                 'errors' => $validator->errors()
+            ]);
+        }
+    }
+
+    public function updateImage(Request $req)
+    {
+        $image = $req->file('image');
+        $pathname = $image->getPathname();
+        $ext = $image->getClientOriginalExtension();
+        $productImage = new ProductImg();
+        $productImage->product_id = $req->product_id;
+        $productImage->save();
+        $newImagename = $req->product_id . '-' . $productImage->id . '-' . time() . '.' . $ext;
+        $productImage->image =  $newImagename;
+        $productImage->save();
+        $dpath = public_path() . '/uploads/product/large/' . $newImagename;
+        File::copy($pathname, $dpath);
+        $imagePath = asset('uploads/product/large/' . $newImagename);
+        return response()->json([
+            'status' => true,
+            'imageId' => $productImage->id,
+            'imagePath' => $imagePath,
+            'message' => 'Image uploaded successfully'
+
+        ]);
+    }
+
+    public function deleteProductImage(Request $req)
+    {
+        $image = ProductImg::find($req->id);
+        if (!$image) {
+            return response()->json([
+                "status" => false,
+                "Message" => "no image found"
+            ]);
+        } else {
+            $image->delete();
+            File::delete(public_path() . '/uploads/product/large/' . $image->image);
+            session()->flash('success', 'Image deleted');
+            return response()->json([
+                'status' => true,
+                'message' => 'deleted'
             ]);
         }
     }

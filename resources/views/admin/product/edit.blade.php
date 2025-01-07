@@ -62,6 +62,22 @@
                             </div>
                         </div>
                         <div class="row image-gallery">
+                            @if ($productImage->isNotEmpty())
+                                @foreach ($productImage as $prodImg)
+                                    <div class="col-md-3" id="single-image{{ $prodImg->id }}">
+                                        <div class="card">
+                                            <input type="hidden" value="{{ $prodImg->id }}" name="productImg[]" />
+                                            <img class="card-img-top"
+                                                src={{ asset('uploads/product/large/' . $prodImg->image) }}
+                                                alt="Card image cap">
+                                            <div class="card-body">
+                                                <a href="javascript:void(0)" onclick="deleteEditImage({{ $prodImg->id }})"
+                                                    class="btn btn-danger">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
 
                         </div>
                         <div class="card mb-3">
@@ -168,7 +184,7 @@
                                     <select name="sub_category" id="sub_category" class="form-control">
                                         @if ($subcategory->isNotEmpty())
                                             @foreach ($subcategory as $subcat)
-                                                <option value="{{ $subcat->id}}"
+                                                <option value="{{ $subcat->id }}"
                                                     {{ $product->sub_cate_id == $subcat->id ? 'selected' : '' }}>
                                                     {{ $product->subCategoryName }}</option>
                                             @endforeach
@@ -321,9 +337,12 @@
         categoryOldAssign();
         Dropzone.autoDiscover = false;
         const dropzone = $('#image').dropzone({
-            url: "{{ route('temp-image-create') }}",
+            url: "{{ route('update-productImage') }}",
             maxFiles: 10,
             paramName: 'image',
+            params: {
+                'product_id': '{{ $product->id }}'
+            },
             addRemoveLinks: true,
             acceptedFiles: "image/jpeg,image/png,image/jpg,image/gif",
             headers: {
@@ -331,13 +350,14 @@
             },
             success: function(file, res) {
                 console.log(res.imagePath);
+                console.log(res.imageId);
                 var gallery = `
                 <div class="col-md-3" id="single-image${res.imageId}">
                  <div class="card" >
                     <input type="hidden" value="${res.imageId}" name="productImg[]" />
                     <img class="card-img-top" src="${res.imagePath}" alt="Card image cap">  
                     <div class="card-body">
-                        <a href="javascript:void(0)" onclick="deleteImage(${res.imageId})" class="btn btn-danger">Delete<a/>    
+                        <a href="javascript:void(0)" onclick="deleteEditImage(${res.imageId})" class="btn btn-danger">Delete</a>    
                     </div>
                   </div>
                 </div>`
@@ -349,8 +369,22 @@
             }
         });
 
-        function deleteImage(id) {
-            $('#single-image' + id).remove();
+        function deleteEditImage(id) {
+            if (confirm("Are you sure to delete this image ?")) {
+                $('#single-image' + id).remove();
+                $.ajax({
+                    url: "{{ route('deleteProductImage') }}",
+                    type:"get",
+                    data: {
+                        id: id
+                    },
+                    success: function(res) {
+                        if (res.status=="true") {
+                            alert('Image deleted successfully');
+                        }
+                    }
+                })
+            }
         }
     </script>
 @endsection

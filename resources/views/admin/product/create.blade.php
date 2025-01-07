@@ -192,6 +192,7 @@
                         </div>
                     </div>
                 </div>
+                
 
                 <div class="pb-5 pt-3">
                     <button class="btn btn-primary">Create</button>
@@ -283,14 +284,13 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(file, res) {
-                console.log(res.imagePath);
                 var gallery = `
                 <div class="col-md-3" id="single-image${res.imageId}">
                  <div class="card" >
                     <input type="hidden" value="${res.imageId}" name="productImg[]" />
                     <img class="card-img-top" src="${res.imagePath}" alt="Card image cap">  
                     <div class="card-body">
-                        <a href="javascript:void(0)" onclick="deleteImage(${res.imageId})" class="btn btn-danger">Delete<a/>    
+                        <a href="javascript:void(0)" onclick="deleteImage(${res.imageId})" class="btn btn-danger">Delete</a>    
                     </div>
                   </div>
                 </div>`

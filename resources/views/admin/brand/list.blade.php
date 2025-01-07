@@ -52,7 +52,9 @@
                         </thead>
                         <tbody>
                             @if ($brand->isNotEmpty())
-                                <?php $i = 1; ?>
+                                <?php  $i = ($brand->currentPage() - 1) * $brand->perPage();
+                                    $i=$i+1;
+                                ?>
                                 @foreach ($brand as $bran)
                                     <tr>
                                         <td>{{ $i }}</td>
