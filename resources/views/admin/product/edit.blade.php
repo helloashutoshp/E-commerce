@@ -8,7 +8,7 @@
                     <h1>Edit Product</h1>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="" class="btn btn-primary">Back</a>
+                    <a href="{{route('admin-product-list')}}" class="btn btn-primary">Back</a>
                 </div>
             </div>
         </div>
@@ -330,10 +330,10 @@
                 }
             });
         }
-
         $('#category').on('change', function() {
             categoryAssign();
         });
+       
         categoryOldAssign();
         Dropzone.autoDiscover = false;
         const dropzone = $('#image').dropzone({

@@ -38,6 +38,7 @@ class categoryCotroller extends Controller
             $category->name = $req->name;
             $category->slug = $req->slug;
             $category->status = $req->status;
+            $category->showHome = $req->show;
             $category->save();
             if (!empty($req->image_id)) {
                 $tempimage = Tempimage::find($req->image_id);
@@ -86,6 +87,7 @@ class categoryCotroller extends Controller
             $category->name = $req->name;
             $category->slug = $req->slug;
             $category->status = $req->status;
+            $category->showHome = $req->show;
             $category->save();
             if (!empty($req->image_id)) {
                 // dd($req->image_id);

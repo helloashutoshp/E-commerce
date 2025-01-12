@@ -8,7 +8,7 @@
                     <h1>Edit Sub Category</h1>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="subcategory.html" class="btn btn-primary">Back</a>
+                    <a href="{{route('sub-category-list')}}" class="btn btn-primary">Back</a>
                 </div>
             </div>
         </div>
@@ -29,7 +29,7 @@
                                         <select name="category" id="category" class="form-control">
                                             {{-- <option value="{{$category->categoryId}}">{{$category->categoryName}}</option> --}}
                                             @foreach ($maincategory as $maincategory)
-                                                <option value="{{ $maincategory->id }}" {{ $category->category_id == $maincategory->id ? 'selected' : '' }}>{{ $maincategory->name }}</option>
+                                                <option value="{{ $maincategory->id }}" {{ $category->cate_id == $maincategory->id ? 'selected' : '' }}>{{ $maincategory->name }}</option>
                                             @endforeach
                                         </select>
                                         <p class="errors"></p>
@@ -49,9 +49,18 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="slug">Slug</label>
-                                    <input readonly type="text" name="slug" id="slug" class="form-control"
+                                    <input  type="text" name="slug" id="slug" class="form-control"
                                         placeholder="Slug" value="{{$category->slug}}">
                                         <p class="errors"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="show">Show In Home Page</label>
+                                    <select name="show" id="show" class="form-control">
+                                        <option value="Yes" {{ $category->showHome == 'Yes' ? 'selected' : '' }}>Yes</option>
+                                        <option value="No" {{ $category->showHome == 'No' ? 'selected' : '' }}>No</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6">

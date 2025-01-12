@@ -8,7 +8,7 @@
                     <h1>Create Product</h1>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="products.html" class="btn btn-primary">Back</a>
+                    <a href="{{route('admin-product-list')}}" class="btn btn-primary">Back</a>
                 </div>
             </div>
         </div>

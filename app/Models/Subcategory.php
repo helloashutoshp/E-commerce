@@ -9,6 +9,6 @@ class Subcategory extends Model
 {
     use HasFactory;
     protected $table = 'sub_cate';
-
+    
 }
     

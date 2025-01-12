@@ -7,6 +7,7 @@ use App\Http\Controllers\admin\homeController;
 use App\Http\Controllers\admin\imageController;
 use App\Http\Controllers\admin\productController;
 use App\Http\Controllers\admin\subCategoryController;
+use App\Http\Controllers\front\homeController as FrontHomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,9 +21,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [FrontHomeController::class, 'index'])->name('home');
+
 
 Route::group(['prefix' => '/admin'], function () {
     Route::group(['middleware' => 'admin.guest'], function () {
@@ -69,7 +69,5 @@ Route::group(['prefix' => '/admin'], function () {
         Route::post('/product/update/', [productController::class, 'update'])->name('admin-product-update');
         Route::post('/product/update/image', [productController::class, 'updateImage'])->name('update-productImage');
         Route::get('/product/image-delete', [productController::class, 'deleteProductImage'])->name('deleteProductImage');
-
-
     });
 });

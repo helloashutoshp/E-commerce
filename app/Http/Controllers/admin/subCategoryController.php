@@ -30,7 +30,8 @@ class subCategoryController extends Controller
             $category->name = $req->name;
             $category->slug = $req->slug;
             $category->status = $req->status;
-            $category->category_id = $req->category;
+            $category->showHome = $req->show;
+            $category->cate_id = $req->category;
             $category->save();
             session()->flash('success', 'Successfully sub category created');
             return response()->json([
@@ -52,7 +53,7 @@ class subCategoryController extends Controller
         $category = Subcategory::select('sub_cate.*', 'cat.name as categoryName')->latest('sub_cate.id')->leftJoin(
             'cat',
             'cat.id',
-            'sub_cate.category_id'
+            'sub_cate.cate_id'
         );
         if ($keyword) {
             $category = $category->where('sub_cate.name', 'like', '%' . $keyword . '%');
@@ -88,7 +89,7 @@ class subCategoryController extends Controller
         $maincategory = Cate::orderby('name', 'ASC')->get();
         $category = Subcategory::select('sub_cate.*', 'cat.name as categoryName' ,'cat.id as categoryId')
             ->latest('sub_cate.id')
-            ->leftJoin('cat', 'cat.id', '=', 'sub_cate.category_id')
+            ->leftJoin('cat', 'cat.id', '=', 'sub_cate.cate_id')
             ->where('sub_cate.id', $id) // Replace $id with the specific ID you want to fetch
             ->first(); // Use `first` to fetch a single record
         if (empty($category)) {
@@ -110,7 +111,8 @@ class subCategoryController extends Controller
             $category->name = $req->name;
             $category->slug = $req->slug;
             $category->status = $req->status;
-            $category->category_id = $req->category;
+            $category->cate_id = $req->category;
+            $category->showHome = $req->show;
             $category->update();
             session()->flash('success', 'Successfully sub category created');
             return response()->json([

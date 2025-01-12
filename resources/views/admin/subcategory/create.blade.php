@@ -8,7 +8,7 @@
                     <h1>Create Sub Category</h1>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="subcategory.html" class="btn btn-primary">Back</a>
+                    <a href="{{ route('sub-category-list') }}" class="btn btn-primary">Back</a>
                 </div>
             </div>
         </div>
@@ -42,15 +42,15 @@
                                     <label for="name">Name</label>
                                     <input type="text" name="name" id="name" class="form-control"
                                         placeholder="Name">
-                                        <p class="errors"></p>
+                                    <p class="errors"></p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="slug">Slug</label>
-                                    <input readonly type="text" name="slug" id="slug" class="form-control"
+                                    <input  type="text" name="slug" id="slug" class="form-control"
                                         placeholder="Slug">
-                                        <p class="errors"></p>
+                                    <p class="errors"></p>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -62,12 +62,21 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="show">Show In Home Page</label>
+                                    <select name="show" id="show" class="form-control">
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="pb-5 pt-3">
                     <button type="submit" class="btn btn-primary">Create</button>
-                    <a href="subcategory.html" class="btn btn-outline-dark ml-3">Cancel</a>
+                    <a href="{{ route('sub-category-list') }}" class="btn btn-outline-dark ml-3">Cancel</a>
                 </div>
             </form>
         </div>

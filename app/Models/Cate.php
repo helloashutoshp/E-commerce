@@ -9,5 +9,7 @@ class Cate extends Model
 {
     use HasFactory;
     protected $table = 'cat';
-
+    public function subCategory(){
+        return $this->hasMany(Subcategory::class)->where('showHome', 'Yes');
+    }
 }

@@ -50,6 +50,15 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
+                                    <label for="show">Show In Home Page</label>
+                                    <select name="show" id="show" class="form-control">
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
                                     <input type="hidden" name="image_id" id="image_id">
                                     <label for="image">Image</label>
                                     <div id="image" class= "dropzone dz-clickable">
@@ -132,7 +141,7 @@
             maxFiles: 1,
             paramName: 'image',
             addRemoveLinks: true,
-            acceptedFiles: "image/jpeg,image/png,image/jpg,image/gif",
+            // acceptedFiles: "image/jpeg,image/png,image/jpg,image/gif/avif,image/webp,image",
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },

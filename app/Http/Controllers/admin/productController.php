@@ -127,7 +127,7 @@ class productController extends Controller
     public function subCategory(Request $req)
     {
         if (!empty($req->category)) {
-            $subcategory = Subcategory::where('category_id', $req->category)->orderBy('name', 'ASC')->get();
+            $subcategory = Subcategory::where('cate_id', $req->category)->orderBy('name', 'ASC')->get();
             return response()->json([
                 'status' => true,
                 'subcategory' => $subcategory

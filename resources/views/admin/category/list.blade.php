@@ -46,8 +46,9 @@
                                 <th width="60">ID</th>
                                 <th>Name</th>
                                 <th>Slug</th>
-                                <th width="100">Status</th>
-                                <th width="100">Action</th>
+                                <th >Status</th>
+                                <th >Show In Home</th>
+                                <th >Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -80,6 +81,7 @@
                                                 </svg>
                                             </td>
                                         @endif
+                                        <td>{{ $cate->showHome }}</td>
                                         <td>
                                             <a href="{{ route('edit-category', $cate->id) }}">
                                                 <svg class="filament-link-icon w-4 h-4 mr-1"
