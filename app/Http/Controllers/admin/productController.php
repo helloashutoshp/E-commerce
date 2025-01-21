@@ -18,7 +18,7 @@ class productController extends Controller
 {
     public function create()
     {
-        $category = Cate::orderBy('name', 'ASC')->get();
+        $category = Cate::orderBy('name', 'ASC')->where('status', 1)->get();
         $brand = Brand::orderBy('name', 'ASC')->get();
         return view('admin.product.create', ['category' => $category, 'brands' => $brand]);
     }
@@ -127,7 +127,7 @@ class productController extends Controller
     public function subCategory(Request $req)
     {
         if (!empty($req->category)) {
-            $subcategory = Subcategory::where('cate_id', $req->category)->orderBy('name', 'ASC')->get();
+            $subcategory = Subcategory::where('cate_id', $req->category)->where('status', 1)->orderBy('name', 'ASC')->get();
             return response()->json([
                 'status' => true,
                 'subcategory' => $subcategory

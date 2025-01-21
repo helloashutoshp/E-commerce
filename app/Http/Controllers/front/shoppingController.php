@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Http\Controllers\front;
+
+use App\Http\Controllers\Controller;
+use App\Models\Brand;
+use App\Models\Cate;
+use App\Models\Product;
+use App\Models\Subcategory;
+use Illuminate\Http\Request;
+
+class shoppingController extends Controller
+{
+    public function index(Request $request, $categorySlug = null, $subCategorySlug = null)
+    {
+        $categorySelected = "";
+        $subCategorySelected = "";
+        $category = Cate::orderby('name', 'ASC')->with('subCategoryStatus')->where('status', 1)->get();
+        $brand = Brand::orderby('name', 'ASC')->where('status', 1)->get();
+        $product = Product::where('status', 1);
+        if (!empty($categorySlug)) {
+            $category_id = Cate::where('slug', $categorySlug)->first();
+            $product =  $product->where('category_id', $category_id->id);
+            $categorySelected = $category_id->id;
+        }
+
+        if (!empty($subCategorySlug)) {
+            $subcategory_id = Subcategory::where('slug', $subCategorySlug)->first();
+            $product =  $product->where('sub_cate_id', $subcategory_id->id);
+            $subCategorySelected = $subcategory_id->id;
+        }
+        $product = $product->orderby('id', 'DESC');
+        $product = $product->get();
+
+        return view('front.shop', ['category' => $category, 'brand' => $brand, 'product' => $product,'categorySelected' => $categorySelected,'subCategorySelected' => $subCategorySelected]);
+    }
+}

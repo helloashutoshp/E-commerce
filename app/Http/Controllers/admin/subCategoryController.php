@@ -13,7 +13,7 @@ class subCategoryController extends Controller
 {
     public function create()
     {
-        $category = Cate::orderby('name', 'ASC')->get();
+        $category = Cate::orderby('name', 'ASC')->where('status',1)->get();
         return view('admin.subcategory.create', ['category' => $category]);
     }
 

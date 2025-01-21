@@ -10,6 +10,9 @@ class Cate extends Model
     use HasFactory;
     protected $table = 'cat';
     public function subCategory(){
-        return $this->hasMany(Subcategory::class)->where('showHome', 'Yes');
+        return $this->hasMany(Subcategory::class)->where('status',1)->where('showHome', 'Yes');
+    }
+    public function subCategoryStatus(){
+        return $this->hasMany(Subcategory::class)->where('status',1);
     }
 }

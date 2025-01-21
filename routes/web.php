@@ -8,6 +8,8 @@ use App\Http\Controllers\admin\imageController;
 use App\Http\Controllers\admin\productController;
 use App\Http\Controllers\admin\subCategoryController;
 use App\Http\Controllers\front\homeController as FrontHomeController;
+use App\Http\Controllers\front\shoppingController;
+use App\Http\Controllers\paymentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,6 +24,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [FrontHomeController::class, 'index'])->name('home');
+Route::get('/shop/{category?}/{subCategory?}', [shoppingController::class, 'index'])->name('shop');
+
 
 
 Route::group(['prefix' => '/admin'], function () {
@@ -71,3 +75,7 @@ Route::group(['prefix' => '/admin'], function () {
         Route::get('/product/image-delete', [productController::class, 'deleteProductImage'])->name('deleteProductImage');
     });
 });
+Route::get('/stripe', [paymentController::class, 'index'])->name('payment-index');
+Route::post('/stripe', [paymentController::class, 'catch'])->name('payment-catch');
+
+

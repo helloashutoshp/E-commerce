@@ -48,7 +48,7 @@
                                 <th>Slug</th>
                                 <th>Category</th>
                                 <th >Status</th>
-                                <th >Shoe In Home</th>
+                                <th >Show In Home</th>
                                 <th >Action</th>
                             </tr>
                         </thead>
