@@ -44,7 +44,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;500&family=Raleway:ital,wght@0,400;0,600;0,800;1,200&family=Roboto+Condensed:wght@400;700&family=Roboto:wght@300;400;700;900&display=swap"
         rel="stylesheet">
-
+    <link href=" https://cdn.jsdelivr.net/npm/ion-rangeslider@2.3.1/css/ion.rangeSlider.min.css" rel="stylesheet">
     <!-- Fav Icon -->
     <link rel="shortcut icon" type="image/x-icon" href="#" />
 </head>
@@ -97,8 +97,9 @@
                         @if (getCategory()->isNotEmpty())
                             @foreach (getCategory() as $category)
                                 <li class="nav-item dropdown">
-                                    <button class="btn btn-dark  @if ($category->subCategory->isNotEmpty()) dropdown-toggle @endif" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
+                                    <button
+                                        class="btn btn-dark  @if ($category->subCategory->isNotEmpty()) dropdown-toggle @endif"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
                                         {{ $category->name }}
                                     </button>
                                     @if ($category->subCategory->isNotEmpty())
@@ -184,6 +185,8 @@
     <script src="{{ asset('front-assets/js/lazyload.17.6.0.min.js') }}"></script>
     <script src="{{ asset('front-assets/js/slick.min.js') }}"></script>
     <script src="{{ asset('front-assets/js/custom.js') }}"></script>
+    <script src=" https://cdn.jsdelivr.net/npm/ion-rangeslider@2.3.1/js/ion.rangeSlider.min.js"></script>
+
     <script>
         window.onscroll = function() {
             myFunction()
@@ -200,6 +203,7 @@
             }
         }
     </script>
+    @yield('custom-Js')
 </body>
 
 </html>

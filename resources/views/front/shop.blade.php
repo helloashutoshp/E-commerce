@@ -39,21 +39,22 @@
                                                     </button>
                                                 </h2>
                                                 <div id="collapseOne{{ $key }}"
-                                                    class="accordion-collapse collapse {{ ( $categorySelected == $cate->id ) ? 'show' : '' }}"
+                                                    class="accordion-collapse collapse {{ $categorySelected == $cate->id ? 'show' : '' }}"
                                                     aria-labelledby="headingOne" data-bs-parent="#accordionExample"
                                                     style="">
                                                     <div class="accordion-body">
                                                         <div class="navbar-nav">
                                                             @foreach ($cate->subCategoryStatus as $subcate)
                                                                 <a href="{{ route('shop', [$cate->slug, $subcate->slug]) }}"
-                                                                    class="nav-item nav-link {{ ( $subCategorySelected == $subcate->id ) ? 'text-primary' : '' }}">{{ $subcate->name }}</a>
+                                                                    class="nav-item nav-link {{ $subCategorySelected == $subcate->id ? 'text-primary' : '' }}">{{ $subcate->name }}</a>
                                                             @endforeach
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         @else
-                                            <a href="{{ route('shop', $cate->slug) }}" class="nav-item nav-link {{ ( $categorySelected == $cate->id ) ? 'text-primary' : '' }}">
+                                            <a href="{{ route('shop', $cate->slug) }}"
+                                                class="nav-item nav-link {{ $categorySelected == $cate->id ? 'text-primary' : '' }}">
                                                 {{ $cate->name }}</a>
                                         @endif
                                     @endforeach
@@ -72,9 +73,10 @@
                             <div class="card-body">
                                 @foreach ($brand as $brandd)
                                     <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" value=""
-                                            id="flexCheckDefault">
-                                        <label class="form-check-label" for="flexCheckDefault">
+                                        <input {{ in_array($brandd->id, $brandValue) ? 'checked' : '' }}
+                                            class="form-check-input brand-val" type="checkbox" value="{{ $brandd->id }}"
+                                            id="flexCheckDefault{{ $brandd->id }}" name="brandName[]">
+                                        <label class="form-check-label" for="flexCheckDefault{{ $brandd->id }}">
                                             {{ $brandd->name }}
                                         </label>
                                     </div>
@@ -89,30 +91,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    $0-$100
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                                <label class="form-check-label" for="flexCheckChecked">
-                                    $100-$200
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                                <label class="form-check-label" for="flexCheckChecked">
-                                    $200-$500
-                                </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                                <label class="form-check-label" for="flexCheckChecked">
-                                    $500+
-                                </label>
-                            </div>
+                            <input type="text" id="example" name="example_name" value="" />
                         </div>
                     </div>
                 </div>
@@ -134,6 +113,8 @@
                             </div>
                         </div>
 
+                        
+
                         @if ($product->isNotEmpty())
                             @foreach ($product as $prod)
                                 @php
@@ -151,8 +132,7 @@
                                             @else
                                                 <a href="" class="product-img">
                                                     <img class="card-img-top"
-                                                        src="{{ asset('uploads/product/large/404.jpg') }}"
-                                                        alt="">
+                                                        src="{{ asset('uploads/product/large/404.jpg') }}" alt="">
                                                 </a>
                                             @endif
                                             <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
@@ -198,4 +178,42 @@
         </div>
     </section>
 
+@endsection
+
+@section('custom-Js')
+    <script>
+        $("#example").ionRangeSlider({
+            // skin: "big",
+            min: 0,
+            max: 10000,
+            from: {{($priceTo)}},
+            step:10,
+            skin:'round',
+            max_postfix:"+",
+            to: {{($priceFrom)}},
+            type: 'double',
+            prefix: "$",
+            // grid: true,
+            // grid_num: 10,
+            onFinish:function(){
+                brandChecked();
+            }
+        });
+        var slider = $('#example').data('ionRangeSlider');
+        $('.brand-val').change(function() {
+            brandChecked();
+        })
+
+        function brandChecked() {
+            var brand = [];
+            $('.brand-val').each(function() {
+                if ($(this).is(':checked') == true) {
+                    brand.push($(this).val());
+                }
+            });
+            var url = '{{ url()->current() }}?';
+            url += '&rangeFrom='+slider.result.from+'&rangeTo='+slider.result.to;
+            window.location.href = url + '&brands=' + brand.toString();
+        }
+    </script>
 @endsection

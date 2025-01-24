@@ -15,6 +15,10 @@ class shoppingController extends Controller
     {
         $categorySelected = "";
         $subCategorySelected = "";
+        $brandValue = [];
+        $priceTo =  "" ;
+        $priceFrom = "" ;
+
         $category = Cate::orderby('name', 'ASC')->with('subCategoryStatus')->where('status', 1)->get();
         $brand = Brand::orderby('name', 'ASC')->where('status', 1)->get();
         $product = Product::where('status', 1);
@@ -29,9 +33,23 @@ class shoppingController extends Controller
             $product =  $product->where('sub_cate_id', $subcategory_id->id);
             $subCategorySelected = $subcategory_id->id;
         }
+
+        if (!empty($request->brands)) {
+            $brandValue = explode(',', $request->brands);
+            $product =  $product->whereIn('brand_id', $brandValue);
+        }
+
+        if (!empty($request->rangeFrom) || !empty($request->rangeTo)) {
+            $product =  $product->whereBetween('price', [intval($request->rangeFrom), intval($request->rangeTo)]);
+            $priceTo =  $request->rangeFrom ;
+            $priceFrom = $request->rangeTo ;
+        }
+
+      
+
         $product = $product->orderby('id', 'DESC');
         $product = $product->get();
 
-        return view('front.shop', ['category' => $category, 'brand' => $brand, 'product' => $product,'categorySelected' => $categorySelected,'subCategorySelected' => $subCategorySelected]);
+        return view('front.shop', ['category' => $category, 'brand' => $brand, 'product' => $product, 'categorySelected' => $categorySelected, 'subCategorySelected' => $subCategorySelected, 'brandValue' => $brandValue, 'priceTo' => $priceTo,'priceFrom' => $priceFrom]);
     }
 }
