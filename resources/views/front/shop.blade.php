@@ -100,20 +100,18 @@
                         <div class="col-12 pb-1">
                             <div class="d-flex align-items-center justify-content-end mb-4">
                                 <div class="ml-2">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-light dropdown-toggle"
-                                            data-bs-toggle="dropdown">Sorting</button>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="#">Latest</a>
-                                            <a class="dropdown-item" href="#">Price High</a>
-                                            <a class="dropdown-item" href="#">Price Low</a>
-                                        </div>
-                                    </div>
+                                    <select name="price" id="price">
+                                        <option {{ $sort == 'latest' ? 'selected' : '' }} value="latest">Latest</option>
+                                        <option {{ $sort == 'low' ? 'selected' : '' }} value="low">Price Low to High
+                                        </option>
+                                        <option {{ $sort == 'high' ? 'selected' : '' }} value="high">Price High to Low
+                                        </option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
 
-                        
+
 
                         @if ($product->isNotEmpty())
                             @foreach ($product as $prod)
@@ -157,20 +155,7 @@
                             @endforeach
                         @endif
                         <div class="col-md-12 pt-5">
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-end">
-                                    <li class="page-item disabled">
-                                        <a class="page-link" href="#" tabindex="-1"
-                                            aria-disabled="true">Previous</a>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#">Next</a>
-                                    </li>
-                                </ul>
-                            </nav>
+                            {{ $product->withQueryString()->links() }}
                         </div>
                     </div>
                 </div>
@@ -186,21 +171,25 @@
             // skin: "big",
             min: 0,
             max: 10000,
-            from: {{($priceTo)}},
-            step:10,
-            skin:'round',
-            max_postfix:"+",
-            to: {{($priceFrom)}},
+            from: {{ $priceTo }},
+            step: 10,
+            skin: 'round',
+            max_postfix: "+",
+            to: {{ $priceFrom }},
             type: 'double',
             prefix: "$",
             // grid: true,
             // grid_num: 10,
-            onFinish:function(){
+            onFinish: function() {
                 brandChecked();
             }
         });
         var slider = $('#example').data('ionRangeSlider');
         $('.brand-val').change(function() {
+            brandChecked();
+        })
+
+        $('#price').change(function() {
             brandChecked();
         })
 
@@ -212,8 +201,16 @@
                 }
             });
             var url = '{{ url()->current() }}?';
-            url += '&rangeFrom='+slider.result.from+'&rangeTo='+slider.result.to;
-            window.location.href = url + '&brands=' + brand.toString();
+            url += '&rangeFrom=' + slider.result.from + '&rangeTo=' + slider.result.to;
+            if (brand.length > 0) {
+                url += '&brands=' + brand.toString();
+            }
+
+            var price = $('#price').val();
+
+            url += '&priceRange=' + price;
+
+            window.location.href = url;
         }
     </script>
 @endsection

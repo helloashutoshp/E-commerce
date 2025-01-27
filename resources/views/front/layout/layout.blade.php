@@ -97,17 +97,22 @@
                         @if (getCategory()->isNotEmpty())
                             @foreach (getCategory() as $category)
                                 <li class="nav-item dropdown">
-                                    <button
-                                        class="btn btn-dark  @if ($category->subCategory->isNotEmpty()) dropdown-toggle @endif"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        {{ $category->name }}
-                                    </button>
+                                    @if ($category->subCategory->isNotEmpty())
+                                        <button class="btn btn-dark dropdown-toggle " data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                            {{ $category->name }}
+                                        </button>
+                                    @else
+                                        <a href="{{ route('shop', $category->slug) }}" class="btn btn-dark  ">
+                                            {{ $category->name }}
+                                        </a>
+                                    @endif
                                     @if ($category->subCategory->isNotEmpty())
                                         <ul class="dropdown-menu dropdown-menu-dark">
                                             @foreach ($category->subCategory as $subcate)
                                                 <li>
                                                     <a class="dropdown-item nav-link"
-                                                        href="#">{{ $subcate->name }}
+                                                        href="{{ route('shop', [$category->slug, $subcate->slug]) }}">{{ $subcate->name }}
                                                     </a>
                                                 </li>
                                             @endforeach

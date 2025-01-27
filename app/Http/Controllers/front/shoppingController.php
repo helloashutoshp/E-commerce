@@ -16,9 +16,8 @@ class shoppingController extends Controller
         $categorySelected = "";
         $subCategorySelected = "";
         $brandValue = [];
-        $priceTo =  "" ;
-        $priceFrom = "" ;
-
+        $priceTo =  "100";
+        $priceFrom = "10000";
         $category = Cate::orderby('name', 'ASC')->with('subCategoryStatus')->where('status', 1)->get();
         $brand = Brand::orderby('name', 'ASC')->where('status', 1)->get();
         $product = Product::where('status', 1);
@@ -40,16 +39,34 @@ class shoppingController extends Controller
         }
 
         if (!empty($request->rangeFrom) || !empty($request->rangeTo)) {
-            $product =  $product->whereBetween('price', [intval($request->rangeFrom), intval($request->rangeTo)]);
-            $priceTo =  $request->rangeFrom ;
-            $priceFrom = $request->rangeTo ;
+            if ($request->rangeTo == 10000) {
+                $product =  $product->whereBetween('price', [intval($request->rangeFrom), 100000000000000000000]);
+            } else {
+                $product =  $product->whereBetween('price', [intval($request->rangeFrom), intval($request->rangeTo)]);
+            }
+            $priceTo =  $request->rangeFrom;
+            $priceFrom = $request->rangeTo;
         }
 
-      
 
-        $product = $product->orderby('id', 'DESC');
-        $product = $product->get();
+        if (!empty($request->priceRange)) {
+            if ($request->priceRange == "latest") {
+                $product = $product->orderby('id', 'DESC');
+                $sort = "latest";
+            } else if ($request->priceRange == "low") {
+                $product = $product->orderby('price', 'ASC');
+                $sort = "low";
+            } else {
+                $product = $product->orderby('price', 'DESC');
+                $sort = "high";
+            }
+        } else {
+            $product = $product->orderby('id', 'DESC');
+            $sort = "";
+        }
 
-        return view('front.shop', ['category' => $category, 'brand' => $brand, 'product' => $product, 'categorySelected' => $categorySelected, 'subCategorySelected' => $subCategorySelected, 'brandValue' => $brandValue, 'priceTo' => $priceTo,'priceFrom' => $priceFrom]);
+        $product = $product->paginate(10);
+
+        return view('front.shop', ['category' => $category, 'brand' => $brand, 'product' => $product, 'categorySelected' => $categorySelected, 'subCategorySelected' => $subCategorySelected, 'brandValue' => $brandValue, 'priceTo' => $priceTo, 'priceFrom' => $priceFrom, 'sort' => $sort]);
     }
 }
