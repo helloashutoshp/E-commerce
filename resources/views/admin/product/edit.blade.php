@@ -8,7 +8,7 @@
                     <h1>Edit Product</h1>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="{{route('admin-product-list')}}" class="btn btn-primary">Back</a>
+                    <a href="{{ route('admin-product-list') }}" class="btn btn-primary">Back</a>
                 </div>
             </div>
         </div>
@@ -43,9 +43,23 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="mb-3">
+                                            <label for="short_description">Short Description</label>
+                                            <textarea name="short_description" id="short_description" cols="30" rows="10" class="summernote"
+                                                placeholder="Short Description">{{ $product->short_description }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
                                             <label for="description">Description</label>
                                             <textarea name="description" id="description" cols="30" rows="10" class="summernote"
                                                 placeholder="Description">{{ $product->description }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="shipping_return">Shipping Return</label>
+                                            <textarea name="shipping_return" id="shipping_return" cols="30" rows="10" class="summernote"
+                                                placeholder="Shipping Return">{{ $product->shipping_return }}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -147,6 +161,23 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h2 class="h4 mb-3">Related product</h2>
+                                <div class="mb-3">
+                                    <select multiple name="related_product[]" id="related_product"
+                                        class="related_product form-control w-100">
+                                        @if ($items->isNotEmpty())
+                                            @foreach ($items as $item)
+                                                <option selected value="{{ $item->id }}">{{ $item->title }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    <p class="error"></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <div class="card mb-3">
@@ -239,6 +270,20 @@
 
 @section('custom')
     <script>
+        $('.related_product').select2({
+            ajax: {
+                url: '{{ route('product.related') }}',
+                dataType: 'json',
+                tags: true,
+                multiple: true,
+                minimumInputLength: 3,
+                processResults: function(data) {
+                    return {
+                        results: data.tags
+                    };
+                }
+            }
+        });
         qtyChecked();
         $('#track_qty').change(function() {
             qtyChecked();
@@ -333,7 +378,7 @@
         $('#category').on('change', function() {
             categoryAssign();
         });
-       
+
         categoryOldAssign();
         Dropzone.autoDiscover = false;
         const dropzone = $('#image').dropzone({
@@ -374,12 +419,12 @@
                 $('#single-image' + id).remove();
                 $.ajax({
                     url: "{{ route('deleteProductImage') }}",
-                    type:"get",
+                    type: "get",
                     data: {
                         id: id
                     },
                     success: function(res) {
-                        if (res.status=="true") {
+                        if (res.status == "true") {
                             alert('Image deleted successfully');
                         }
                     }

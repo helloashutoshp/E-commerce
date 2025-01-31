@@ -8,7 +8,7 @@
                     <h1>Create Product</h1>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="{{route('admin-product-list')}}" class="btn btn-primary">Back</a>
+                    <a href="{{ route('admin-product-list') }}" class="btn btn-primary">Back</a>
                 </div>
             </div>
         </div>
@@ -42,9 +42,23 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="mb-3">
+                                            <label for="short_description">Short Description</label>
+                                            <textarea name="short_description" id="short_description" cols="30" rows="10" class="summernote"
+                                                placeholder="Short Description"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
                                             <label for="description">Description</label>
                                             <textarea name="description" id="description" cols="30" rows="10" class="summernote"
                                                 placeholder="Description"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="shipping_return">Shipping Return</label>
+                                            <textarea name="shipping_return" id="shipping_return" cols="30" rows="10" class="summernote"
+                                                placeholder="Shipping Return"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -190,9 +204,20 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h2 class="h4 mb-3">Related product</h2>
+                                <div class="mb-3">
+                                    <select multiple name="related_product[]" id="related_product" class="related_product form-control">
+
+                                    </select>
+                                    <p class="error"></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
+
 
                 <div class="pb-5 pt-3">
                     <button class="btn btn-primary">Create</button>
@@ -206,6 +231,20 @@
 
 @section('custom')
     <script>
+        $('.related_product').select2({
+            ajax: {
+                url: '{{ route("product.related") }}',
+                dataType: 'json',
+                tags: true,
+                multiple: true,
+                minimumInputLength: 3,
+                processResults: function(data) {
+                    return {
+                        results: data.tags
+                    };
+                }
+            }
+        });
         $('#track_qty').change(function() {
             $('#qty').prop('disabled', !this.checked);
         });
@@ -295,14 +334,15 @@
                   </div>
                 </div>`
                 $('.image-gallery').append(gallery);
-               
+
             },
-            complete:function(file){
-                    this.removeFile(file);
-                }
+            complete: function(file) {
+                this.removeFile(file);
+            }
         });
-        function deleteImage(id){
-            $('#single-image'+id).remove();
+
+        function deleteImage(id) {
+            $('#single-image' + id).remove();
         }
     </script>
 @endsection

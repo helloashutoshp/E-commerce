@@ -147,7 +147,7 @@
                             <div class="card product-card">
                                 <div class="product-image position-relative">
                                     @if ($image)
-                                        <a href="{{ $product->slug }}" class="product-img"><img class="card-img-top"
+                                        <a href="{{route('product',$product->slug)}}" class="product-img"><img class="card-img-top"
                                                 src="{{ asset('uploads/product/large/' . $image->image) }}"
                                                 alt=""></a>
                                     @else
@@ -196,11 +196,11 @@
                             <div class="card product-card">
                                 <div class="product-image position-relative">
                                     @if ($image)
-                                        <a href="{{ $product->slug }}" class="product-img"><img class="card-img-top"
+                                        <a href="{{route('product',$product->slug)}}" class="product-img"><img class="card-img-top"
                                                 src="{{ asset('uploads/product/large/' . $image->image) }}"
                                                 alt=""></a>
                                     @else
-                                        <a href="" class="product-img">
+                                        <a href="{{route('product',$product->slug)}}" class="product-img">
 
                                             <img class="card-img-top" src="{{ asset('uploads/product/large/404.jpg') }}"
                                                 alt="">

@@ -25,6 +25,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontHomeController::class, 'index'])->name('home');
 Route::get('/shop/{category?}/{subCategory?}', [shoppingController::class, 'index'])->name('shop');
+Route::get('/product/{slug}', [shoppingController::class, 'product'])->name('product');
+Route::get('/getProduct', [productController::class, 'productRelated'])->name('product.related');
+
 
 
 
@@ -77,5 +80,3 @@ Route::group(['prefix' => '/admin'], function () {
 });
 Route::get('/stripe', [paymentController::class, 'index'])->name('payment-index');
 Route::post('/stripe', [paymentController::class, 'catch'])->name('payment-catch');
-
-

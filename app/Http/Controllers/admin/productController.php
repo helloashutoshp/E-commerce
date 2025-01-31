@@ -44,6 +44,8 @@ class productController extends Controller
             $product->title = $req->title;
             $product->slug = $req->slug;
             $product->description = $req->description;
+            $product->short_description = $req->short_description;
+            $product->shipping_return = $req->shipping_return;
             $product->price = $req->price;
             $product->compare_price = $req->compare_price;
             $product->category_id = $req->category;
@@ -55,6 +57,8 @@ class productController extends Controller
             $product->trackqty = $req->track_qty;
             $product->qty = $req->qty;
             $product->status = $req->status;
+            $product->related_product = !empty($req->related_product) ? implode(',', $req->related_product) : '';
+
             $product->save();
 
             if (!empty($req->productImg)) {
@@ -144,6 +148,12 @@ class productController extends Controller
     {
         $prod = Product::find($id);
         $productImage = ProductImg::where('product_id', $id)->get();
+        $productArray = [];
+        if (!empty($prod->related_product)) {
+            $productArray = explode(',', $prod->related_product);
+            $items = Product::whereIn('id', $productArray)->get();
+        }
+
         if (empty($prod)) {
             session()->flash('error', ' product not found');
             return redirect()->route('admin-product-list');
@@ -168,7 +178,7 @@ class productController extends Controller
             session()->flash('error', ' product not found');
             return redirect()->route('admin-product-list');
         }
-        return view('admin.product.edit', ['product' => $product, 'brands' => $brand, 'category' => $category, 'subcategory' => $subcategory, 'productImage' => $productImage]);
+        return view('admin.product.edit', ['product' => $product, 'brands' => $brand, 'category' => $category, 'subcategory' => $subcategory, 'productImage' => $productImage, 'items' => $items]);
     }
 
     public function destroy($id)
@@ -215,6 +225,8 @@ class productController extends Controller
             $product->title = $req->title;
             $product->slug = $req->slug;
             $product->description = $req->description;
+            $product->short_description = $req->short_description;
+            $product->shipping_return = $req->shipping_return;
             $product->price = $req->price;
             $product->compare_price = $req->compare_price;
             $product->category_id = $req->category;
@@ -226,6 +238,7 @@ class productController extends Controller
             $product->trackqty = $req->track_qty;
             $product->qty = $req->qty;
             $product->status = $req->status;
+            $product->related_product = !empty($req->related_product) ? implode(',', $req->related_product) : '';
             $product->update();
 
             session()->flash('success', 'Successfully product updated');
@@ -281,5 +294,23 @@ class productController extends Controller
                 'message' => 'deleted'
             ]);
         }
+    }
+
+    public function productRelated(Request $request)
+    {
+        $total_product = [];
+        if (!empty($request->term)) {
+            $product = Product::where('title', 'like', '%' . $request->term . '%')->get();
+
+            if (!empty($product)) {
+                foreach ($product as $prod) {
+                    $total_product[] = array('id' => $prod->id, 'text' => $prod->title);
+                }
+            }
+        }
+        return response()->json([
+            'tags' => $total_product,
+            'status' => 'success'
+        ]);
     }
 }

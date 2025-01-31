@@ -69,4 +69,22 @@ class shoppingController extends Controller
 
         return view('front.shop', ['category' => $category, 'brand' => $brand, 'product' => $product, 'categorySelected' => $categorySelected, 'subCategorySelected' => $subCategorySelected, 'brandValue' => $brandValue, 'priceTo' => $priceTo, 'priceFrom' => $priceFrom, 'sort' => $sort]);
     }
+
+    public function product($slug)
+    {
+        $product = Product::where('slug', $slug)->with('product_img')->first();
+        if($product == NULL){
+            abort(404);
+        }
+        $items = collect();
+        $prod = Product::find($product->id);
+        $productArray = [];
+        if (!empty($prod->related_product)) {
+            $productArray = explode(',', $prod->related_product);
+            $items = Product::whereIn('id', $productArray)->with('product_img')->get();
+            // dd($items->product_img->first());
+        }
+
+        return view('front.product', ['product' => $product,'items' => $items]);
+    }
 }
