@@ -124,6 +124,8 @@ class productController extends Controller
                 ->leftJoin('brand', 'brand.id', '=', 'product.brand_id')
                 ->latest('product.id')
                 ->paginate(10);
+                dd($product);
+
         }
         return view('admin.product.list', ['product' => $product]);
     }
@@ -149,6 +151,7 @@ class productController extends Controller
         $prod = Product::find($id);
         $productImage = ProductImg::where('product_id', $id)->get();
         $productArray = [];
+        $items = collect();
         if (!empty($prod->related_product)) {
             $productArray = explode(',', $prod->related_product);
             $items = Product::whereIn('id', $productArray)->get();

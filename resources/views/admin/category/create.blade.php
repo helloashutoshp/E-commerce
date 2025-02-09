@@ -101,6 +101,7 @@
                         window.location.href = "{{ route('category-list') }}"
                     } else {
                         var errors = response['errors'];
+                        console.log(errors);
                         $("input[type='text'], input[type='number'], select").removeClass('is-invalid');
                         $('.error').removeClass('invalid-feedback').html('');
                         $.each(errors, function(key, value) {

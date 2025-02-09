@@ -17,6 +17,8 @@
 
     <section class="section-7 pt-3 mb-3">
         <div class="container">
+            @include('admin.message')
+
             <div class="row ">
                 <div class="col-md-5">
                     <div id="product-carousel" class="carousel slide" data-bs-ride="carousel">
@@ -64,7 +66,8 @@
                         <h2 class="price ">${{ $product->price }}</h2>
                         {!! $product->short_description !!}
 
-                        <a href="cart.php" class="btn btn-dark"><i class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
+                        <a href="" onClick="addToCart(event,{{ $product->id }})" class="btn btn-dark"><i
+                                class="fas fa-shopping-cart"></i> &nbsp;ADD TO CART</a>
                     </div>
                 </div>
 
@@ -113,7 +116,7 @@
             </div>
             @if ($items->isNotEmpty())
                 <div class="col-md-12">
-                    <div id="related-products" class="carousel">
+                    <div id="related-products" class="carousel related-slick">
                         @foreach ($items as $item)
                             @php
                                 $image = $item->product_img->first();
@@ -121,11 +124,12 @@
                             <div class="card product-card">
                                 <div class="product-image position-relative">
                                     @if ($image)
-                                        <a href="{{route('product',$item->slug)}}" class="product-img"><img class="card-img-top"
+                                        <a href="{{ route('product', $item->slug) }}" class="product-img"><img
+                                                class="card-img-top"
                                                 src="{{ asset('uploads/product/large/' . $image->image) }}"
                                                 alt=""></a>
                                     @else
-                                        <a href="{{route('product',$item->slug)}}" class="product-img">
+                                        <a href="{{ route('product', $item->slug) }}" class="product-img">
 
                                             <img class="card-img-top" src="{{ asset('uploads/product/large/404.jpg') }}"
                                                 alt="">
@@ -134,7 +138,7 @@
                                     <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
 
                                     <div class="product-action">
-                                        <a class="btn btn-dark" href="#">
+                                        <a class="btn btn-dark" href="" onClick="addToCart(event,{{ $product->id }})">
                                             <i class="fa fa-shopping-cart"></i> Add To Cart
                                         </a>
                                     </div>
@@ -154,4 +158,17 @@
 
         </div>
     </section>
+@endsection
+@section('custom-js')
+    <script>
+        $('.related-slick').slick({
+            infinite: true,
+            speed: 300,
+            slidesToShow: 4,
+            // variableWidth: true,
+            autoplay: true,
+        });
+
+       
+    </script>
 @endsection

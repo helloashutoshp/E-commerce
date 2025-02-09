@@ -4,6 +4,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>@yield('title')</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <meta name="description" content="" />
     <meta name="viewport"
         content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=no" />
@@ -55,7 +57,7 @@
         <div class="container">
             <div class="row align-items-center py-3 d-none d-lg-flex justify-content-between">
                 <div class="col-lg-4 logo">
-                    <a href="{{route('home')}}" class="text-decoration-none">
+                    <a href="{{ route('home') }}" class="text-decoration-none">
                         <span class="h1 text-uppercase text-primary bg-dark px-2">Online</span>
                         <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">SHOP</span>
                     </a>
@@ -79,7 +81,7 @@
     <header class="bg-dark">
         <div class="container">
             <nav class="navbar navbar-expand-xl" id="navbar">
-                <a href="{{route('home')}}" class="text-decoration-none mobile-logo">
+                <a href="{{ route('home') }}" class="text-decoration-none mobile-logo">
                     <span class="h2 text-uppercase text-primary bg-dark">Online</span>
                     <span class="h2 text-uppercase text-white px-2">SHOP</span>
                 </a>
@@ -124,7 +126,7 @@
                     </ul>
                 </div>
                 <div class="right-nav py-0">
-                    <a href="cart.php" class="ml-3 d-flex pt-2">
+                    <a href="{{ route('product.cart') }}" class="ml-3 d-flex pt-2">
                         <i class="fas fa-shopping-cart text-primary"></i>
                     </a>
                 </div>
@@ -191,7 +193,9 @@
     <script src="{{ asset('front-assets/js/slick.min.js') }}"></script>
     <script src="{{ asset('front-assets/js/custom.js') }}"></script>
     <script src=" https://cdn.jsdelivr.net/npm/ion-rangeslider@2.3.1/js/ion.rangeSlider.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"
+        integrity="sha512-HGOnQO9+SP1V92SrtZfjqxxtLmVzqZpjFFekvzZVWoiASSQgSr4cw9Kqd2+l8Llp4Gm0G8GIFJ4ddwZilcdb8A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         window.onscroll = function() {
             myFunction()
@@ -207,8 +211,34 @@
                 navbar.classList.remove("sticky");
             }
         }
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        function addToCart(e, id) {
+            e.preventDefault();
+            $.ajax({
+                url: "{{ route('product.addToCart') }}",
+                data: {
+                    id: id
+                },
+                method: 'POST',
+                dataType: 'json',
+                success: function(response) {
+                    var slug = response.slug;
+                    if (response.status == true) {
+                        alert("Product added in cart");
+
+                    } else {
+                      alert("Product already exit in cart");
+                    }
+                }
+            })
+        }
     </script>
-    @yield('custom-Js')
+    @yield('custom-js')
 </body>
 
 </html>

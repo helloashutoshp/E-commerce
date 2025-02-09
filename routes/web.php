@@ -7,7 +7,9 @@ use App\Http\Controllers\admin\homeController;
 use App\Http\Controllers\admin\imageController;
 use App\Http\Controllers\admin\productController;
 use App\Http\Controllers\admin\subCategoryController;
+use App\Http\Controllers\basicController;
 use App\Http\Controllers\front\homeController as FrontHomeController;
+use App\Http\Controllers\front\shopController;
 use App\Http\Controllers\front\shoppingController;
 use App\Http\Controllers\paymentController;
 use Illuminate\Support\Facades\Route;
@@ -27,7 +29,21 @@ Route::get('/', [FrontHomeController::class, 'index'])->name('home');
 Route::get('/shop/{category?}/{subCategory?}', [shoppingController::class, 'index'])->name('shop');
 Route::get('/product/{slug}', [shoppingController::class, 'product'])->name('product');
 Route::get('/getProduct', [productController::class, 'productRelated'])->name('product.related');
+Route::get('/addtoCart', [shopController::class, 'cart'])->name('product.cart');
+Route::post('/add-to-cart', [shopController::class, 'addToCart'])->name('product.addToCart');
 
+
+Route::group(['prefix'=>'/basic'],function(){
+    // Route::group(['middleware' => ''],function(){
+        Route::get('/register',[basicController::class,'create'])->name('create');
+        Route::post('/register',[basicController::class,'store'])->name('store');
+        Route::get('/show',[basicController::class,'show'])->name('show');
+        Route::get('/delete/{id}',[basicController::class,'delete'])->name('delete');
+        Route::get('/edit/{id}',[basicController::class,'edit'])->name('edit');
+        Route::get('/deleteimage',[basicController::class,'deleteImg'])->name('deleteImage');
+        Route::post('/update',[basicController::class,'update'])->name('update');
+    // });
+});
 
 
 
