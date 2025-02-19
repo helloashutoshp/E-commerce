@@ -124,7 +124,7 @@ class productController extends Controller
                 ->leftJoin('brand', 'brand.id', '=', 'product.brand_id')
                 ->latest('product.id')
                 ->paginate(10);
-                dd($product);
+                // dd($product);
 
         }
         return view('admin.product.list', ['product' => $product]);

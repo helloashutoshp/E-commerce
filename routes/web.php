@@ -29,19 +29,22 @@ Route::get('/', [FrontHomeController::class, 'index'])->name('home');
 Route::get('/shop/{category?}/{subCategory?}', [shoppingController::class, 'index'])->name('shop');
 Route::get('/product/{slug}', [shoppingController::class, 'product'])->name('product');
 Route::get('/getProduct', [productController::class, 'productRelated'])->name('product.related');
-Route::get('/addtoCart', [shopController::class, 'cart'])->name('product.cart');
+Route::get('/cart', [shopController::class, 'cart'])->name('product.cart');
 Route::post('/add-to-cart', [shopController::class, 'addToCart'])->name('product.addToCart');
+Route::get('/cart-items', [shopController::class, 'cart'])->name('cartMenu');
+Route::post('/cart-items', [shopController::class, 'cartItems'])->name('cartItems');
+Route::post('/cart/update',[shopController::class,'cartUpdate'])->name('cartUpdate');
+Route::post('/cart/delete',[shopController::class,'cartDelete'])->name('cartDelete');
 
-
-Route::group(['prefix'=>'/basic'],function(){
+Route::group(['prefix' => '/basic'], function () {
     // Route::group(['middleware' => ''],function(){
-        Route::get('/register',[basicController::class,'create'])->name('create');
-        Route::post('/register',[basicController::class,'store'])->name('store');
-        Route::get('/show',[basicController::class,'show'])->name('show');
-        Route::get('/delete/{id}',[basicController::class,'delete'])->name('delete');
-        Route::get('/edit/{id}',[basicController::class,'edit'])->name('edit');
-        Route::get('/deleteimage',[basicController::class,'deleteImg'])->name('deleteImage');
-        Route::post('/update',[basicController::class,'update'])->name('update');
+    Route::get('/register', [basicController::class, 'create'])->name('create');
+    Route::post('/register', [basicController::class, 'store'])->name('store');
+    Route::get('/show', [basicController::class, 'show'])->name('show');
+    Route::get('/delete/{id}', [basicController::class, 'delete'])->name('delete');
+    Route::get('/edit/{id}', [basicController::class, 'edit'])->name('edit');
+    Route::get('/deleteimage', [basicController::class, 'deleteImg'])->name('deleteImage');
+    Route::post('/update', [basicController::class, 'update'])->name('update');
     // });
 });
 

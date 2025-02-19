@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
+use Illuminate\Support\Facades\Auth;
 
 class shopController extends Controller
 {
     public function addtoCart(Request $req)
     {
         $product = Product::with('product_img')->find($req->id);
+        // dd($product->qty);
         if ($product) {
             $cartArray = Cart::content();
             $productExit = false;
@@ -28,7 +30,7 @@ class shopController extends Controller
                     'message' => "Product alreay added in cart"
                 ]);
             } else {
-                Cart::add($product->id, $product->title, $product->sku, $product->price, array('productImage' => (!empty($product->product_img)) ? $product->product_img->first() : ''));
+                Cart::add($product->id, $product->title, 1, $product->price, array('productImage' => (!empty($product->product_img)) ? $product->product_img->first() : ''));
                 session()->flash('success', 'Product added in cart');
                 return response()->json([
                     'status' => true,
@@ -46,8 +48,70 @@ class shopController extends Controller
     }
     public function cart()
     {
-       $cart = Cart::content();
-    //    dd($cart);   
-        return view('front.cart',['cart' => $cart]);
+        $cart = Cart::content();
+        //    dd($cart);   
+        return view('front.cart', ['cart' => $cart]);
+    }
+
+    public function cartUpdate(Request $request)
+    {
+        // dd('hello');
+        $cartItem = Cart::get($request->id);
+        $product_id = $cartItem->id;
+        // dd($product_id);
+        $product = Product::find($product_id);
+        if ($product->trackqty == 'Yes') {
+            $productQty = $product->qty;
+
+            if ($request->quantity > $productQty) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Reached max quantity'
+                ]);
+            } else {
+                Cart::update($request->id, $request->quantity);
+
+                $subtotal = Cart::subtotal();
+                $rowTotal = $cartItem->price * $cartItem->qty;
+                return response()->json([
+                    'status' => true,
+                    'subtotal' => $subtotal,
+                    'rowTotal' => $rowTotal,
+                    'rowId' => $request->id,
+                    'message' => "Cart updated"
+                ]);
+            }
+        } else {
+            Cart::update($request->id, $request->quantity);
+
+            $subtotal = Cart::subtotal();
+            $rowTotal = $cartItem->price * $cartItem->qty;
+            return response()->json([
+                'status' => true,
+                'subtotal' => $subtotal,
+                'rowTotal' => $rowTotal,
+                'rowId' => $request->id,
+                'message' => "Cart updated"
+            ]);
+        }
+    }
+
+    public function cartDelete(Request $request)
+    {
+        $rowId = $request->id;
+        Cart::remove($rowId);
+        return response()->json([
+            'status' => true,
+            'message' => "Item removed"
+        ]);
+    }
+
+    public function cartItems(Request $req)
+    {
+        $id = $req->id;
+        //  dd($id);
+        // $product = Product::find($id);
+        $user_id = Auth::id();
+        dd($user_id);
     }
 }

@@ -147,7 +147,8 @@
                             <div class="card product-card">
                                 <div class="product-image position-relative">
                                     @if ($image)
-                                        <a href="{{route('product',$product->slug)}}" class="product-img"><img class="card-img-top"
+                                        <a href="{{ route('product', $product->slug) }}" class="product-img"><img
+                                                class="card-img-top"
                                                 src="{{ asset('uploads/product/large/' . $image->image) }}"
                                                 alt=""></a>
                                     @else
@@ -160,7 +161,7 @@
                                     <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
 
                                     <div class="product-action">
-                                        <a class="btn btn-dark" href="" onClick="addToCart(event,{{ $product->id }})">
+                                        <a class="btn btn-dark" href="" onClick="customCart(event,{{$product->id}})">
                                             <i class="fa fa-shopping-cart"></i> Add To Cart
                                         </a>
                                     </div>
@@ -196,11 +197,12 @@
                             <div class="card product-card">
                                 <div class="product-image position-relative">
                                     @if ($image)
-                                        <a href="{{route('product',$product->slug)}}" class="product-img"><img class="card-img-top"
+                                        <a href="{{ route('product', $product->slug) }}" class="product-img"><img
+                                                class="card-img-top"
                                                 src="{{ asset('uploads/product/large/' . $image->image) }}"
                                                 alt=""></a>
                                     @else
-                                        <a href="{{route('product',$product->slug)}}" class="product-img">
+                                        <a href="{{ route('product', $product->slug) }}" class="product-img">
 
                                             <img class="card-img-top" src="{{ asset('uploads/product/large/404.jpg') }}"
                                                 alt="">
@@ -209,7 +211,8 @@
                                     <a class="whishlist" href="222"><i class="far fa-heart"></i></a>
 
                                     <div class="product-action">
-                                        <a class="btn btn-dark" href="" onClick="addToCart(event,{{ $product->id }})">
+                                        <a class="btn btn-dark" href=""
+                                            onClick="addToCart(event,{{ $product->id }})">
                                             <i class="fa fa-shopping-cart"></i> Add To Cart
                                         </a>
                                     </div>
@@ -227,4 +230,21 @@
             @endif
         </div>
     </section>
+@endsection
+
+@section('custom-js')
+    <script>
+        function customCart(e,id) {
+            e.preventDefault();
+            $.ajax({
+                url:"{{route('cartItems')}}",
+                method:'post',
+                data:{id:id},
+                type:'json',
+                success:function(response){
+
+                }
+            })
+        }
+    </script>
 @endsection
