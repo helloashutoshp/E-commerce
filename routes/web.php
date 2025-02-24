@@ -8,6 +8,7 @@ use App\Http\Controllers\admin\imageController;
 use App\Http\Controllers\admin\productController;
 use App\Http\Controllers\admin\subCategoryController;
 use App\Http\Controllers\basicController;
+use App\Http\Controllers\front\authController;
 use App\Http\Controllers\front\homeController as FrontHomeController;
 use App\Http\Controllers\front\shopController;
 use App\Http\Controllers\front\shoppingController;
@@ -33,8 +34,22 @@ Route::get('/cart', [shopController::class, 'cart'])->name('product.cart');
 Route::post('/add-to-cart', [shopController::class, 'addToCart'])->name('product.addToCart');
 Route::get('/cart-items', [shopController::class, 'cart'])->name('cartMenu');
 Route::post('/cart-items', [shopController::class, 'cartItems'])->name('cartItems');
-Route::post('/cart/update',[shopController::class,'cartUpdate'])->name('cartUpdate');
-Route::post('/cart/delete',[shopController::class,'cartDelete'])->name('cartDelete');
+Route::post('/cart/update', [shopController::class, 'cartUpdate'])->name('cartUpdate');
+Route::post('/cart/delete', [shopController::class, 'cartDelete'])->name('cartDelete');
+
+
+
+Route::group(['prefix' => '/account'], function () {
+    Route::group(['middleware' => 'guest'], function () {
+        Route::get('/login', [authController::class, 'login'])->name('userLogin');
+        Route::post('/login', [authController::class, 'loginAction'])->name('user-loginAction');
+        Route::get('/register', [authController::class, 'register'])->name('userRegister');
+        Route::post('/register', [authController::class, 'store'])->name('user-register-store');
+    });
+    Route::group(['middleware' => 'auth'], function () {
+        Route::get('/profile', [authController::class, 'profile'])->name('user-profile');
+    });
+});
 
 Route::group(['prefix' => '/basic'], function () {
     // Route::group(['middleware' => ''],function(){
