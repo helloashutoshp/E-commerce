@@ -35,6 +35,9 @@ class authController extends Controller
                 // dd("hello");
                 // $admin = Auth::guard('admin')->user();
                 // if ($admin->role == 1) {
+                    if ((session()->has('url.checkout'))) {
+                        return redirect()->route('checkOut');
+                    }
                 return redirect()->route('user-profile');
                 // } else {
                 // $admin = Auth::guard('admin')->logout();
@@ -90,6 +93,13 @@ class authController extends Controller
 
     public function profile()
     {
-        return view('front.layout.sidebar');
+        $user = Auth::id();
+        $user = User::find($user);
+        return view('front.profile', ['user' => $user]);
+    }
+    public function logout()
+    {
+        Auth::logout();
+        return view('front.auth.login');
     }
 }

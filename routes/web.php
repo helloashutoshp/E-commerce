@@ -36,6 +36,7 @@ Route::get('/cart-items', [shopController::class, 'cart'])->name('cartMenu');
 Route::post('/cart-items', [shopController::class, 'cartItems'])->name('cartItems');
 Route::post('/cart/update', [shopController::class, 'cartUpdate'])->name('cartUpdate');
 Route::post('/cart/delete', [shopController::class, 'cartDelete'])->name('cartDelete');
+Route::get('/checkout', [shopController::class, 'checkOut'])->name('checkOut');
 
 
 
@@ -48,6 +49,7 @@ Route::group(['prefix' => '/account'], function () {
     });
     Route::group(['middleware' => 'auth'], function () {
         Route::get('/profile', [authController::class, 'profile'])->name('user-profile');
+        Route::get('/logout', [authController::class, 'logout'])->name('user-logout');
     });
 });
 

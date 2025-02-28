@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\front;
 
 use App\Http\Controllers\Controller;
+use App\Models\CountryModel;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Gloudemans\Shoppingcart\Facades\Cart;
@@ -113,5 +114,21 @@ class shopController extends Controller
         // $product = Product::find($id);
         $user_id = Auth::id();
         dd($user_id);
+    }
+
+    public function checkOut()
+    {
+        if (Cart::count() < 1) {
+            return redirect()->route('shop');
+        }
+        if (Auth::check() == false) {
+            if (!(session()->has('url.checkout'))) {
+                session(['url.checkout' => url()->current()]);
+            }
+            return redirect()->route('userLogin');
+        }
+        session()->forget('url.checkout');
+        $country = CountryModel::all();
+        return view('front.checkout',['country'=>$country]);
     }
 }

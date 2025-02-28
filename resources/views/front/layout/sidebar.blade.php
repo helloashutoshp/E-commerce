@@ -1,11 +1,6 @@
-@extends('front.layout.layout')
-@section('title')
-    Profile
-@endsection
-@section('content')
     <ul id="account-panel" class="nav nav-pills flex-column">
         <li class="nav-item">
-            <a href="account.php" class="nav-link font-weight-bold" role="tab" aria-controls="tab-login"
+            <a href="{{route('user-profile')}}" class="nav-link font-weight-bold" role="tab" aria-controls="tab-login"
                 aria-expanded="false"><i class="fas fa-user-alt"></i> My Profile</a>
         </li>
         <li class="nav-item">
@@ -21,8 +16,8 @@
                 aria-expanded="false"><i class="fas fa-lock"></i> Change Password</a>
         </li>
         <li class="nav-item">
-            <a href="login.php" class="nav-link font-weight-bold" role="tab" aria-controls="tab-register"
+            <a href="{{route('user-logout')}}" class="nav-link font-weight-bold" role="tab" aria-controls="tab-register"
                 aria-expanded="false"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </li>
     </ul>
-@endsection
+
